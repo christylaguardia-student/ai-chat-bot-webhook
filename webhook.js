@@ -12,8 +12,9 @@ app.post('/', (req, res) => {
         speech: jsonObj.value,
         displayText: jsonObj.value,
         data: jsonObj,
-        contextOut: "",
-        source: ""
+        contextOut: [],
+        source: "",
+        followupEvent: {}
       };
       res.setHeader('Content-type', 'application/json');
       res.send(webhookObj);
