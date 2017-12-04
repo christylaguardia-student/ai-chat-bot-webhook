@@ -4,13 +4,10 @@ const request = require('superagent');
 const PORT = process.env.PORT || 3000;
 
 app.post('/', (req, res) => {
-  return request
+  request
     .get('https://api.chucknorris.io/jokes/random')
-    .then(res => {
-      console.log('chuck norris says:', res.body.value)
-      return res.body.value;
-    })
-    .catch(err => console.log(err.status, 'error', err));
+    .then(response => res.send(response.body.value))
+    .catch(err => console.log(err))
 });
 
 app.listen(PORT, () => {
