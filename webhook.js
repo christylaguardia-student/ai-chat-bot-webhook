@@ -6,7 +6,10 @@ const PORT = process.env.PORT || 3000;
 app.post('/', (req, res) => {
   return request
     .get('https://api.chucknorris.io/jokes/random')
-    .then(joke => res.send(joke.text))
+    .then(joke => {
+      const webhookObj = { result: joke.text.value };
+      res.send(webhookObj);
+    })
     .catch(err => console.log(err))
 });
 
