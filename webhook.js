@@ -15,6 +15,7 @@ app.post('/', (req, res) => {
         contextOut: "",
         source: ""
       };
+      res.header('Content-type:', 'application/json');
       res.send(webhookObj);
     })
     .catch(err => console.log(err))
