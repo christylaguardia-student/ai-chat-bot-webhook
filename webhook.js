@@ -7,7 +7,8 @@ app.post('/', (req, res) => {
   return request
     .get('https://api.chucknorris.io/jokes/random')
     .then(joke => {
-      const webhookObj = { result: joke.text.value };
+      const jsonObj = JSON.parse(joke.text)
+      const webhookObj = { result: jsonObj.value };
       res.send(webhookObj);
     })
     .catch(err => console.log(err))
