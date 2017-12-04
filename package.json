@@ -7,6 +7,7 @@
   "description": "",
   "main": "webhook.js",
   "scripts": {
+    "start": "node webhook.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
