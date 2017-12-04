@@ -8,7 +8,13 @@ app.post('/', (req, res) => {
     .get('https://api.chucknorris.io/jokes/random')
     .then(joke => {
       const jsonObj = JSON.parse(joke.text)
-      const webhookObj = { result: jsonObj.value };
+      const webhookObj = {
+        speech: jsonObj.value,
+        displayText: jsonObj.value,
+        data: jsonObj,
+        contextOut: "",
+        source: ""
+      };
       res.send(webhookObj);
     })
     .catch(err => console.log(err))
