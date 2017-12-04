@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3000;
 app.post('/', (req, res) => {
   return request
     .get('https://api.chucknorris.io/jokes/random')
-    .then(response => res.send(response.body.value))
+    .then(joke => res.send(joke.text))
     .catch(err => console.log(err))
 });
 
