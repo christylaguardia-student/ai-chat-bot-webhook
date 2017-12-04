@@ -1,0 +1,25 @@
+{
+  "engines": {
+    "node": "8.1.x"
+  },
+  "name": "ai-chat-bot-webhook",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webhook.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/christylaguardia/ai-chat-bot-webhook.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/christylaguardia/ai-chat-bot-webhook/issues"
+  },
+  "homepage": "https://github.com/christylaguardia/ai-chat-bot-webhook#readme",
+  "dependencies": {
+    "superagent": "^3.8.1"
+  }
+}
