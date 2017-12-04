@@ -3,7 +3,7 @@ const app = express();
 const request = require('superagent');
 const PORT = process.env.PORT || 3000;
 
-app.use('/', (req, res) => {
+app.post('/', (req, res) => {
   return request
     .get('https://api.chucknorris.io/jokes/random')
     .then(res => {
