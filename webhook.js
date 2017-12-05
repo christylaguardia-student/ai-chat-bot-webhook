@@ -32,7 +32,13 @@ app.post('/', bodyParser, (req, res) => {
       break;
     
     default:
-      res.send('Uh oh! Something went wrong.');
+      res.send({
+        speech: 'Uh oh! Something went wrong.',
+        displayText: 'Uh oh! Something went wrong.',
+        data: 'Uh oh! Something went wrong.',
+        contextOut: [],
+        source: ''
+      });
   }
 });
 
