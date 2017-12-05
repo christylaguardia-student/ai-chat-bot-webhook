@@ -9,40 +9,25 @@ const PORT = process.env.PORT || 3000;
 const appId = process.env.APP_ID;
 
 app.post('/', bodyParser, (req, res) => {
-  console.log('req.body', req.body || 'no body');
-
-  let results = {};
-  const { action } = req.body.result;
+  const { action, parameters } = req.body.result;
 
   switch (action) {
     case 'WEBHOOK_ACTION_PRODUCT':
-      results = 'getProductData()';
+      getProductData(parameters.product)
+        .then(data => res.send(data));
       break;
 
     case 'WEBHOOK_ACTION_CHUCK':
-      results = 'getChuckNorrisJoke()';
+      getChuckNorrisJoke()
+        .then(data => res.send(data));
       break;
     
     default:
-      results = 'Uh oh! Something went wrong.';
+      res.send('Uh oh! Something went wrong.');
   }
-
-  res.setHeader('Content-type', 'application/json');
-  res.send({
-    speech: results,
-    displayText: results,
-    data: results,
-    contextOut: [],
-    source: "",
-    followupEvent: {}
-  });
-
 });
 
-
-function getProductData() {
-  const searchTerm = 'harry%20potter';
-
+function getProductData(product) {
   let url = 'http://svcs.ebay.com/services/search/FindingService/v1'
   url += '?OPERATION-NAME=findItemsByKeywords'
   url += '&SERVICE-VERSION=1.0.0';
@@ -50,33 +35,35 @@ function getProductData() {
   url += '&GLOBAL-ID=EBAY-US';
   url += '&RESPONSE-DATA-FORMAT=JSON';
   url += '&callback=_cb_findItemsByKeywords';
-  // url += '&REST-PAYLOAD';
-  url += `&keywords=${searchTerm}`;
+  url += '&REST-PAYLOAD';
+  url += `&keywords=${product}`;
   url += '&paginationInput.entriesPerPage=3';
-  // url += '&itemFilter(0).name=MaxPrice';
-  // url += '&itemFilter(0).value=25';
-  // url += '&itemFilter(0).paramName=Currency';
-  // url += '&itemFilter(0).paramValue=USD';
-  // url += '&itemFilter(1).name=FreeShippingOnly';
-  // url += '&itemFilter(1).value=true';
-  // url += '&itemFilter(2).name=ListingType';
-  // url += '&itemFilter(2).value(0)=AuctionWithBIN';
-  // url += '&itemFilter(2).value(1)=FixedPrice';
-  // url += '&itemFilter(2).value(2)=StoreInventory';
 
   return superagent
-    .get('url')
+    .get(url)
     .then(data => {
-      // const length = data.text.length - 1;
-      // const parsedData = data.text.substring(28, length);
-      // const jsonObj = JSON.parse(parsedData)
-      // const searchResultCounts = jsonObj.findItemsByKeywordsResponse[0].searchResult[0]['@count'];
-      // const searchResultData = jsonObj.findItemsByKeywordsResponse[0].searchResult[0].item;
-      // return `I found ${searchResultCounts} products`;
-
-      return 'results from ebay api go here';
+      const length = data.text.length - 1;
+      const parsedData = data.text.substring(28, length);
+      const jsonObj = JSON.parse(parsedData)
+      
+      const selectedItem = jsonObj.findItemsByKeywordsResponse[0].searchResult[0].item[0];
+      let responseText = `I found this ${product} for you on eBay: "${selectedItem.title}".`
+      responseText += ` "${selectedItem.subtitle}."`;
+      responseText += ` Here's the link: ${selectedItem.viewItemURL}`;
+      
+      console.log('responseText', responseText);
+      return {
+        speech: responseText,
+        displayText: responseText,
+        data: responseText,
+        contextOut: [],
+        source: ''
+      };
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      console.log(err);
+      return `I'm sorry, I couldn't find "${product}" for you on eBay.`;
+    })
 }
 
 function getChuckNorrisJoke() {
@@ -84,8 +71,16 @@ function getChuckNorrisJoke() {
     .get('https://api.chucknorris.io/jokes/random')
     .then(data => {
       const jsonData = JSON.parse(data.text)
-      console.log(jsonData);
-      return jsonData.value;
+      const responseText = jsonData.value;
+      console.log(responseText);
+
+      return {
+        speech: responseText,
+        displayText: responseText,
+        data: responseText,
+        contextOut: [],
+        source: ''
+      };
     })
     .catch(err => console.log(err))
 }
