@@ -34,10 +34,7 @@ app.post('/', bodyParser, (req, res) => {
     default:
       res.send({
         speech: 'Uh oh! Something went wrong.',
-        displayText: 'Uh oh! Something went wrong.',
-        data: 'Uh oh! Something went wrong.',
-        contextOut: [],
-        source: ''
+        displayText: 'Uh oh! Something went wrong.'
       });
   }
 });
@@ -50,25 +47,23 @@ function getProductData(product) {
     .then(data => {
       const response = JSON.parse(data.text);
       const selectedItem = response.findItemsByKeywordsResponse[0].searchResult[0].item[0];
-      console.log(selectedItem);
 
       let responseText = `I found this "${product}" for you on eBay: ${selectedItem.title}`;
       responseText += ` The current bid price is $${selectedItem.sellingStatus[0].currentPrice[0]['__value__']}.`;
       responseText += ` Here's the link: ${selectedItem.viewItemURL}`;
       
-      console.log('responseText', responseText);
       return {
         speech: responseText,
-        displayText: responseText,
-        data: responseText,
-        contextOut: [],
-        source: ''
+        displayText: responseText
       };
     })
     .catch(err => {
       console.log(err);
-      return `I'm sorry, I couldn't find "${product}" for you on eBay.`;
-    })
+      return {
+        speech: `I'm sorry, I couldn't find "${product}" for you on eBay.`,
+        displayText: `I'm sorry, I couldn't find "${product}" for you on eBay.`
+      };
+    });
 }
 
 function getProductDealsData(product) {
@@ -79,25 +74,23 @@ function getProductDealsData(product) {
     .then(data => {
       const response = JSON.parse(data.text);
       const selectedItem = response.findItemsByKeywordsResponse[0].searchResult[0].item[0];
-      console.log(selectedItem);
-
       let responseText = `I found this deal on "${product}" for you on eBay: ${selectedItem.title}`;
       responseText += ` The current bid price is $${selectedItem.sellingStatus[0].currentPrice[0]['__value__']}.`;
       responseText += ` Here's the link: ${selectedItem.viewItemURL}`;
 
-      console.log('responseText', responseText);
       return {
         speech: responseText,
-        displayText: responseText,
-        data: responseText,
-        contextOut: [],
-        source: ''
+        displayText: responseText
       };
     })
     .catch(err => {
       console.log(err);
-      return `I'm sorry, I couldn't find a deal on "${product}" for you on eBay.`;
-    })
+
+      return {
+        speech: `I'm sorry, I couldn't find a deal on "${product}" for you on eBay.`,
+        displayText: `I'm sorry, I couldn't find a deal on "${product}" for you on eBay.`
+      };
+    });
 }
 
 function getDadJoke() {
@@ -106,17 +99,19 @@ function getDadJoke() {
     .set('Accept', 'application/json')
     .then(data => {
       const { joke } = data.body;
-      console.log(joke);
 
       return {
         speech: joke,
-        displayText: joke,
-        data: joke,
-        contextOut: [],
-        source: ''
+        displayText: joke
       };
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      console.log(err);
+      return {
+        speech: 'I\'m sorry, I don\'t feel like joking around right now',
+        displayText: 'I\'m sorry, I don\'t feel like joking around right now'
+      };
+    });
 }
 
 app.listen(PORT, () => {
