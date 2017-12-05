@@ -12,14 +12,14 @@ app.post('/', bodyParser, (req, res) => {
   console.log('req.body', req.body || 'no body');
 
   let results = {};
-  const { WEBHOOK_ACTION } = req.body;
+  const { action } = req.body.result;
 
   switch (action) {
-    case 'product':
+    case 'WEBHOOK_ACTION_PRODUCT':
       results = 'getProductData()';
       break;
 
-    case 'chuck':
+    case 'WEBHOOK_ACTION_CHUCK':
       results = 'getChuckNorrisJoke()';
       break;
     
