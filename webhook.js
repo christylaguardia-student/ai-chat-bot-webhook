@@ -15,6 +15,10 @@ ebayApiUrl += '&GLOBAL-ID=EBAY-US';
 ebayApiUrl += '&RESPONSE-DATA-FORMAT=JSON';
 ebayApiUrl += '&paginationInput.entriesPerPage=1';
 
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
+
 app.post('/', bodyParser, (req, res) => {
   const { action, parameters } = req.body.result;
 
