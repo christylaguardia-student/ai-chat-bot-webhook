@@ -7,19 +7,6 @@ require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
 const appId = process.env.APP_ID;
-let ebayApiUrl = 'http://svcs.ebay.com/services/search/FindingService/v1';
-ebayApiUrl += '?OPERATION-NAME=findItemsByKeywords';
-ebayApiUrl += '&SERVICE-VERSION=1.0.0';
-ebayApiUrl += `&SECURITY-APPNAME=${appId}`;
-ebayApiUrl += '&GLOBAL-ID=EBAY-US';
-ebayApiUrl += '&RESPONSE-DATA-FORMAT=JSON';
-ebayApiUrl += '&paginationInput.entriesPerPage=10';
-ebayApiUrl += '&ItemFilterType=BestOfferOnly=true';
-ebayApiUrl += '&itemFilter(0).name=Condition';
-ebayApiUrl += '&itemFilter(0).value(0)=';
-
-const ebayApiUrlNew = 1000;
-const ebayApiUrlUsed = 3000;
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
@@ -29,13 +16,8 @@ app.post('/', bodyParser, (req, res) => {
   const { action, parameters } = req.body.result;
 
   switch (action) {
-    case 'WEBHOOK_ACTION_PRODUCT_NEW':
-      getProductData(parameters.product, false)
-        .then(data => res.send(data));
-      break;
-    
-    case 'WEBHOOK_ACTION_PRODUCT_USED':
-      getProductData(parameters.product, true)
+    case 'WEBHOOK_ACTION_PRODUCT':
+      getProductData(parameters.product, parameters.condition)
         .then(data => res.send(data));
       break;
 
@@ -51,17 +33,28 @@ app.post('/', bodyParser, (req, res) => {
   }
 });
 
-function getProductData(product, used) {
-  let url = `${ebayApiUrl}${used ? ebayApiUrlNew : ebayApiUrlNew}&keywords=${product}`;
+function getProductData(product, condition) {
+  let url = 'http://svcs.ebay.com/services/search/FindingService/v1';
+  url += '?OPERATION-NAME=findItemsByKeywords';
+  url += '&SERVICE-VERSION=1.0.0';
+  url += `&SECURITY-APPNAME=${appId}`;
+  url += '&GLOBAL-ID=EBAY-US';
+  url += '&RESPONSE-DATA-FORMAT=JSON';
+  url += '&paginationInput.entriesPerPage=10';
+  url += '&ItemFilterType=BestOfferOnly=true';
+  url += '&itemFilter(0).name=Condition';
+  url += `&itemFilter(0).value(0)=${condition === 'new' ? 1000 : 3000}`;
+  url += `&keywords=${product}`;
 
+  
   return superagent
     .get(url)
     .then(data => {
       const response = JSON.parse(data.text);
       const selectedItem = response.findItemsByKeywordsResponse[0].searchResult[0].item[0];
       const price = selectedItem.sellingStatus[0].currentPrice[0]['__value__'];
-      let responseText = `I found this ${used ? 'USED' : 'NEW'}`;
-      responseText += ` "${product}" for you on eBay: ${selectedItem.title}`;
+      let responseText = `I found this ${condition} "${product}" for you on eBay:`;
+      responseText += ` ${selectedItem.title}`;
       responseText += ` The current bid price is $${price}.`;
       responseText += ` Here's the link: ${selectedItem.viewItemURL}`;
       
