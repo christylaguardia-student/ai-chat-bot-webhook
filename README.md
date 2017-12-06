@@ -6,11 +6,32 @@ A simple express http server for use as the webhook for a Dialogflow agent.
 * [View web app](https://ebay-chat-bot.herokuapp.com/)
 * [View the web source code](https://ebay-chat-bot.herokuapp.com/)
 
-## Reponse
+## Request
 
-* POST `https://ai-chat-bot-webhook.herokuapp.com/`
+* Method: POST
+* Url: `https://ai-chat-bot-webhook.herokuapp.com/`
 * Headers: Content-type: application/json
-* Response is specialy formatted for the bot
+* Body:
+```
+{
+	"result": {
+	    "action": "WEBHOOK_ACTION_PRODUCT_USED",
+	    "parameters": {
+	      "product": "desktop computer"
+	    }
+	}
+}
+```
+
+3 action types:
+  * `WEBHOOK_ACTION_PRODUCT_NEW`
+  * `WEBHOOK_ACTION_PRODUCT_USED`
+  * `WEBHOOK_ACTION_ACTION`
+
+## Response
+
+
+* Response is formatted for the bot
 
 ```
 {
